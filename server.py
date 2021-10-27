@@ -1,3 +1,4 @@
+import json
 from typing import Optional
 import hmac
 import hashlib
@@ -6,7 +7,7 @@ import base64
 from fastapi import FastAPI, Form, Cookie
 from fastapi.responses import Response
 
-from settings import SECRET_KEY
+from settings import SECRET_KEY, PASSWORD_SALT
 
 app = FastAPI()
 
@@ -14,12 +15,12 @@ app = FastAPI()
 users = {
     'ivan@ya.ru': {
         'name': 'Ivan',
-        'password': 'qweqweqweqwe',
+        'password': '1dcbc1c226e70ce7a71238787d7f70fdf906934dde11d9b662502a8bd8784926',
         'balance': 100_000
     },    
     'pertr@ya.ru': {
         'name': 'pert',
-        'password': 'qweqweqweqwe2',
+        'password': '5dff562e6b11e6f23209a2d0054922074cae26e5a98ffef70c6baaf8892bea72',
         'balance': 0
     }
 }
@@ -32,6 +33,13 @@ def get_username_from_cookie(username_cookie: str) -> Optional[str]:
     valid_sing = hash_sign_cookie(username)
     if hmac.compare_digest(valid_sing, sign):
         return username
+
+
+def verify_password(username: str, password: str) -> bool:
+    user = users.get(username)
+    password_hash = hashlib.sha256(f"{password} + {PASSWORD_SALT}".encode()).hexdigest().lower()
+    stored_password_hashed = user['password']
+    return password_hash == stored_password_hashed.lower()
 
 
 def hash_sign_cookie(cookie: str) -> str:
@@ -66,14 +74,18 @@ def index_page(username: Optional[str] = Cookie(default=None)):
 
 @app.post('/login')
 def process_login_page(username : str = Form(...), password: str = Form(...)):
-    user = users.get(username)
-    if not user or user['password'] != password:
+    if username not in users or not verify_password(username, password):
         return Response(
-            f'Incorrect password or username', media_type='text/html'
+        json.dumps({
+            "success": False,
+            "message": "Incorrect password or username",
+        }), media_type='application/json'
         )
-    password = user.get('password')
     response = Response(
-        f'your login {username}, your balance is {user["balance"]}', media_type='text/html'
+        json.dumps({
+            "success": True,
+            "message": "Login success",
+        }), media_type='application/json'
         )
     base64_username = base64.b64encode(username.encode()).decode()
     hashed_cookie = hash_sign_cookie(username)

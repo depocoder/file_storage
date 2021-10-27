@@ -38,6 +38,31 @@
         }
         
     </style>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function(){
+        console.log('hello')
+        let btn = document.querySelector('input[type="submit"]')
+        btn.addEventListener('click', async function(e){
+            e.preventDefault();
+            let response = await fetch('/login', {
+                method: "POST",
+                body: new FormData(document.querySelector('form'))
+            }
+
+            )
+            let response_json = await response.json();
+            if (response_json.success){
+                let body = document.querySelector('body');
+                body.style.background = 'White';
+                body.innerHTML = response_json.message;
+                // TODO add if for failed loggin
+                // TODO add beatiful message for loggin page
+            }
+
+        })
+        // btn.click()
+    })
+    </script>
     <!-- <link rel="stylesheet" type="text/css" href="static/styles.css" /> -->
 </head>
 <body>
