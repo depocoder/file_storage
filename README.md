@@ -1,4 +1,12 @@
 # easy-auth
+
+## Проект еще на этапе доработки
+ 
+# Запуск в докере
+```bash
+docker-compose up -d
+ ```
+ 
  
 ```bash
 uvicorn server:app --reload
