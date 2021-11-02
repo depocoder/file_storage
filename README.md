@@ -7,10 +7,6 @@
  docker build -t tifipy/easy-auth:master .
 ```
  
-```bash
-uvicorn server:app --reload
-```
-
 Переменные окружения
 
 SECRET_KEY - Соль для подписания кукисов, чтобы сгенировать свою соль используйте команду
