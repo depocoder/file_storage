@@ -27,7 +27,7 @@ users = {
 
 
 def get_username_from_cookie(username_cookie: str) -> Optional[str]:
-    '''Получение username'a из подписанной куки'''
+    """Получение username'a из подписанной куки"""
     username, sign = username_cookie.split('.')
     username = base64.b64decode(username.encode()).decode()
     valid_sing = hash_sign_cookie(username)
@@ -43,7 +43,7 @@ def verify_password(username: str, password: str) -> bool:
 
 
 def hash_sign_cookie(cookie: str) -> str:
-    '''Возвращает подписанные данные'''
+    """Возвращает подписанные данные"""
     return hmac.new(
             SECRET_KEY.encode(), msg=cookie.encode(), digestmod=hashlib.sha256
         ).hexdigest().upper()
@@ -65,7 +65,7 @@ def index_page(username: Optional[str] = Cookie(default=None)):
     user = users.get(valid_username)
     if user:
         return Response(
-            f'You have alredy logged in your account. Your login {valid_username}, your balance is {user["balance"]}', media_type='text/html'
+            f'You have already logged in your account. Your login {valid_username}, your balance is {user["balance"]}', media_type='text/html'
             )
     else:
         response.delete_cookie('username')

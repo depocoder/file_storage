@@ -13,3 +13,13 @@ services:
       - ./:/usr/src/app/
     env_file:
       - ./.env
+  
+  database:
+    image: postgres
+    env_file:
+      - database.env
+    volumes:
+      - database-data:/var/lib/postgresql/data/ 
+
+volumes:
+  database-data:
