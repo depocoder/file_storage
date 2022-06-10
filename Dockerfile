@@ -1,9 +1,17 @@
 FROM python:3.9
 
-WORKDIR /app
+ENV POETRY_VERSION=1.1.13 \
+    POETRY_VIRTUALENVS_CREATE=false \
+    PYTHONFAULTHANDLER=1 \
+    PYTHONUNBUFFERED=1
 
-COPY requirements.txt requirements.txt
+RUN pip install "poetry==$POETRY_VERSION"
 
-RUN pip3 install -r requirements.txt
+WORKDIR /code
+COPY poetry.lock pyproject.toml /code/
 
-COPY . .
+RUN poetry install
+
+COPY . /code
+
+CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000",]
