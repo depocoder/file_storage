@@ -1,5 +1,7 @@
-import os
+from environs import Env
 
-SECRET_KEY = os.getenv('SECRET_KEY', '719e93d1dec7e4874e5881db6c3434a9788910b27e2d8478429cef084ac5d726')
+env = Env()
 
-PASSWORD_SALT = os.getenv('PASSWORD_SALT', '325f946469438be7424fa11501de8400b913ef16727b6ac0e7c3e72e405416a8')
+SECRET_KEY = env('SECRET_KEY')
+
+PASSWORD_SALT = env('PASSWORD_SALT')
