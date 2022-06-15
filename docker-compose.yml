@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   web:
-    image: tifipy/easy-auth:master
+    image: tifipy/file_storage:master
     build:
       context: ./
       dockerfile: Dockerfile
