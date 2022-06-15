@@ -3,7 +3,7 @@ import base64
 import hashlib
 import hmac
 import json
-from typing import Optional
+from typing import Optional, Union
 
 from fastapi import Cookie, FastAPI, Form
 from fastapi.responses import Response
@@ -24,7 +24,7 @@ users = {
 }
 
 
-def get_username_from_cookie(username_cookie: str) -> str:
+def get_username_from_cookie(username_cookie: str) -> Union[str, None]:
     """Get username from signed cookie."""
     username, sign = username_cookie.split('.')
     username = base64.b64decode(username.encode()).decode()
@@ -34,7 +34,7 @@ def get_username_from_cookie(username_cookie: str) -> str:
 
 
 def verify_password(username: str, password: str) -> bool:
-    user = users.get(username)
+    user = users[username]
     hashed_password = hashlib.sha256(f'{password} + {PASSWORD_SALT}'.encode())
     stored_password_hashed: str = user['password']
     return hashed_password.hexdigest().lower() == stored_password_hashed.lower()
