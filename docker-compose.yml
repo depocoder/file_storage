@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   web:
-    image: tifipy/file_storage:master
+    image: depocoder/file_storage:master
     build:
       context: ./
       dockerfile: Dockerfile
