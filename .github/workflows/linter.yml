@@ -1,4 +1,4 @@
-name: Pylint
+name: ci cd
 
 on: [push]
 
@@ -17,6 +17,6 @@ jobs:
     - name: Install dependencies
       run: |
           make full-install
-    - name: Analysing the code with pylint
+    - name: Analysing the code with flake8 and mypy
       run: |
           make lint
