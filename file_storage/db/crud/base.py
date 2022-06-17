@@ -43,8 +43,8 @@ class CRUDBase(
         """
         Get all entry models with limit/offset pagination.
 
-        :param limit: limit of dummies.
-        :param offset: offset of dummies.
+        :param limit: limit of users.
+        :param offset: offset of users.
         :return: stream of model objects.
         """
         raw_objects = await self.session.execute(
