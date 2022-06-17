@@ -44,13 +44,13 @@ repos:
     language: system
     types: [python]
 
-#  - id: flake8
-#    name: Check with Flake8
-#    entry: poetry run flake8
-#    language: system
-#    pass_filenames: false
-#    types: [python]
-#    args: [--count, --config, setup.cfg, .]
+  - id: flake8
+    name: Check with Flake8
+    entry: poetry run flake8
+    language: system
+    pass_filenames: false
+    types: [python]
+    args: [--count, --config, setup.cfg, .]
 
   - id: mypy
     name: Validate types with MyPy
@@ -64,5 +64,11 @@ repos:
   - id: yesqa
     name: Remove usless noqa
     entry: poetry run yesqa
+    language: system
+    types: [python]
+
+  - id: bandit
+    name: check code vulnerabilities via bandit
+    entry: poetry run bandit .
     language: system
     types: [python]
