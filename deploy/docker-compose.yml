@@ -1,0 +1,57 @@
+version: '3.9'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile
+    image: file_storage:${FILE_STORAGE_VERSION:-latest}
+    restart: always
+    env_file:
+    - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      FILE_STORAGE_HOST: 0.0.0.0
+      FILE_STORAGE_DB_HOST: file_storage-db
+      FILE_STORAGE_DB_PORT: 5432
+      FILE_STORAGE_DB_USER: file_storage
+      FILE_STORAGE_DB_PASS: file_storage
+      FILE_STORAGE_DB_BASE: file_storage
+
+
+  db:
+    image: postgres:13.6-bullseye
+    hostname: file_storage-db
+    environment:
+      POSTGRES_PASSWORD: "file_storage"
+      POSTGRES_USER: "file_storage"
+      POSTGRES_DB: "file_storage"
+    volumes:
+    - file_storage-db-data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: pg_isready -U file_storage
+      interval: 2s
+      timeout: 3s
+      retries: 40
+  migrator:
+    image: file_storage:${FILE_STORAGE_VERSION:-latest}
+    restart: "no"
+    command: alembic upgrade head
+    environment:
+      FILE_STORAGE_DB_HOST: file_storage-db
+      FILE_STORAGE_DB_PORT: 5432
+      FILE_STORAGE_DB_USER: file_storage
+      FILE_STORAGE_DB_PASS: file_storage
+      FILE_STORAGE_DB_BASE: file_storage
+    depends_on:
+      db:
+        condition: service_healthy
+
+
+
+volumes:
+  file_storage-db-data:
+    name: file_storage-db-data

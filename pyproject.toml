@@ -1,20 +1,71 @@
 [tool.poetry]
 name = "file_storage"
 version = "0.1.0"
-description = ""
+description = "file storage RESTful app"
 authors = ["depocoder"]
+maintainers = []
+readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-fastapi = "^0.78.0"
-uvicorn = "^0.17.6"
+fastapi = "^0.75.0"
+uvicorn = { version = "^0.17.0", extras = ["standard"] }
+pydantic = {extras = ["email"], version = "^1.9.1"}
+yarl = "^1.7.2"
+ujson = "^5.1.0"
+SQLAlchemy = {version = "^1.4", extras = ["mypy", "asyncio"]}
+alembic = "^1.7.7"
+asyncpg = {version = "^0.25.0", extras = ["sa"]}
+aiofiles = "^0.8.0"
+httptools = "^0.3.0"
 python-multipart = "^0.0.5"
-environs = "^9.5.0"
+mypy = "^0.961"
+bandit = "^1.7.4"
 
 [tool.poetry.dev-dependencies]
+pytest = "^7.0"
 flake8 = "^4.0.1"
+isort = "^5.9.3"
+yesqa = "^1.2.3"
+pre-commit = "^2.11.0"
+black = "^22.3.0"
+autoflake = "^1.4"
+SQLAlchemy = {version = "^1.4", extras = ["mypy"]}
+pytest-cov = "^3.0.0"
+anyio = "^3.5.0"
+pytest-env = "^0.6.2"
+requests = "^2.26.0"
+httpx = "^0.22.0"
 wemake-python-styleguide = "^0.16.1"
-mypy = "^0.961"
+
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+src_paths = ["file_storage",]
+
+[tool.mypy]
+strict = true
+ignore_missing_imports = true
+allow_subclassing_any = true
+allow_untyped_calls = true
+pretty = true
+show_error_codes = true
+implicit_reexport = true
+allow_untyped_decorators = true
+warn_return_any = false
+warn_no_return = false
+plugins = ["sqlalchemy.ext.mypy.plugin", "pydantic.mypy"]
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "error",
+    "ignore::DeprecationWarning",
+    "ignore:.*unclosed.*:ResourceWarning",
+]
+env = [
+    "FILE_STORAGE_DB_BASE=file_storage_test",
+]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
