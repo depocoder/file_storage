@@ -2,8 +2,12 @@
 from pathlib import Path
 from tempfile import gettempdir
 
+from environs import Env
 from pydantic import BaseSettings
 from yarl import URL
+
+env = Env()
+env.read_env()
 
 TEMP_DIR = Path(gettempdir())
 
@@ -23,6 +27,7 @@ class Settings(BaseSettings):
     db_pass: str = "file_storage"
     db_base: str = "file_storage"
     db_echo: bool = False
+    secret_key = env("SECRET_KEY")
 
     @property
     def db_url(self) -> URL:
