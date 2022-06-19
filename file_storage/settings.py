@@ -1,4 +1,5 @@
 """Settings module."""
+import os
 from pathlib import Path
 from tempfile import gettempdir
 
@@ -28,6 +29,7 @@ class Settings(BaseSettings):
     db_base: str = "file_storage"
     db_echo: bool = False
     secret_key = env("SECRET_KEY")
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
     @property
     def db_url(self) -> URL:
