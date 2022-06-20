@@ -44,7 +44,7 @@
         let btn = document.querySelector('input[type="submit"]')
         btn.addEventListener('click', async function(e){
             e.preventDefault();
-            let response = await fetch('/login', {
+            let response = await fetch('/api/login', {
                 method: "POST",
                 body: new FormData(document.querySelector('form'))
             }
@@ -67,7 +67,7 @@
 </head>
 <body>
     <div class="placeholder"></div>
-    <form method="POST" action="/login">
+    <form method="POST" action="/api/login">
         <input type="text" name="username" />
         <input type="password" name="password" />
         <input type="submit" value="Войти" />

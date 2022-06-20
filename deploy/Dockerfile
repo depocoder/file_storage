@@ -1,6 +1,11 @@
 FROM python:3.9.6-slim-buster
 
-RUN pip install poetry==1.1.8
+ENV POETRY_VERSION=1.1.8 \
+    POETRY_VIRTUALENVS_CREATE=false \
+    PYTHONFAULTHANDLER=1 \
+    PYTHONUNBUFFERED=1
+
+RUN pip install "poetry==$POETRY_VERSION"
 
 # Configuring poetry
 RUN poetry config virtualenvs.create false
