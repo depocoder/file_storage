@@ -1,6 +1,6 @@
 """Settings module."""
 import os
-from pathlib import Path
+import pathlib
 from tempfile import gettempdir
 
 from environs import Env
@@ -10,7 +10,7 @@ from yarl import URL
 env = Env()
 env.read_env()
 
-TEMP_DIR = Path(gettempdir())
+TEMP_DIR = pathlib.Path(gettempdir())
 
 
 class Settings(BaseSettings):
@@ -29,7 +29,11 @@ class Settings(BaseSettings):
     db_base: str = "file_storage"
     db_echo: bool = False
     secret_key = env("SECRET_KEY")
+
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    app_dir = pathlib.Path(base_dir, "file_storage")
+    template_dir = pathlib.Path(app_dir, "templates")
+    static_dir = pathlib.Path(app_dir, "static")
 
     @property
     def db_url(self) -> URL:
