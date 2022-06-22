@@ -42,9 +42,8 @@ async def index_page(
     db: AsyncSession = Depends(get_db_session),
 ) -> Response:
     template_path = pathlib.Path(
-        settings.base_dir,
-        "file_storage",
-        "templates/index.html",
+        settings.template_dir,
+        "index.html",
     )
     with open(template_path) as index_file:
         html = index_file.read()
