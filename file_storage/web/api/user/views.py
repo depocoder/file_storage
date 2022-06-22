@@ -1,13 +1,17 @@
 """User view."""
+import base64
+import json
 from typing import List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Form, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from file_storage.db.crud.user import UserCRUD
 from file_storage.db.dependencies import get_db_session
 from file_storage.db.models.user import User
+from file_storage.web.api.cryptography import sign_cookie
 from file_storage.web.api.user.schema import BaseUserInDbScheme, UserWithPasswordScheme
+from file_storage.web.api.user.utils import verify_password
 
 router = APIRouter()
 
@@ -43,3 +47,46 @@ async def create_user(
     user = await UserCRUD(db).create(user_object)
     user.password = "*" * len(user.password)
     return user
+
+
+@router.post("/login", name="login")
+async def process_login_page(
+    username: str = Form(...),
+    password: str = Form(...),
+    db: AsyncSession = Depends(get_db_session),
+) -> Response:
+    user = await UserCRUD(db).get_by_username(username)
+    if not user:
+        return Response(
+            json.dumps(
+                {
+                    "success": False,
+                    "message": "Username is not registered.",
+                },
+            ),
+            media_type="application/json",
+        )
+    if not verify_password(password, user.hashed_password, user.password_salt):
+        return Response(
+            json.dumps(
+                {
+                    "success": False,
+                    "message": "Password is incorrect.",
+                },
+            ),
+            media_type="application/json",
+        )
+    response = Response(
+        json.dumps(
+            {
+                "success": True,
+                "message": "Login success",
+            },
+        ),
+        media_type="application/json",
+    )
+    base64_username = base64.b64encode(username.encode()).decode()
+    hashed_cookie = sign_cookie(username)
+    cookie_value = f"{base64_username}.{hashed_cookie}"
+    response.set_cookie(key="username", value=cookie_value)
+    return response

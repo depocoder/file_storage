@@ -1,10 +1,9 @@
 """Fast api main app."""
 import base64
 import hmac
-import json
 from typing import Optional
 
-from fastapi import APIRouter, Cookie, Depends, Form, Request
+from fastapi import APIRouter, Cookie, Depends, Request
 from fastapi.responses import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.templating import Jinja2Templates
@@ -12,7 +11,7 @@ from starlette.templating import Jinja2Templates
 from file_storage.db.crud.user import UserCRUD
 from file_storage.db.dependencies import get_db_session
 from file_storage.settings import settings
-from file_storage.web.api.cryptography import hash_password, sign_cookie
+from file_storage.web.api.cryptography import sign_cookie
 
 templates = Jinja2Templates(directory=settings.template_dir)
 
@@ -26,16 +25,6 @@ def get_username_from_cookie(username_cookie: str) -> Optional[str]:
     valid_sing = sign_cookie(username)
     if hmac.compare_digest(valid_sing, sign):
         return username
-
-
-def verify_password(
-    password: str,
-    stored_hashed_password: str,
-    password_salt: str,
-) -> bool:
-    """Verify paasword for user."""
-    hashed_password = hash_password(password, password_salt)
-    return stored_hashed_password == hashed_password
 
 
 @router.get("/")
@@ -60,47 +49,4 @@ async def index_page(
             media_type="text/html",
         )
     response.delete_cookie("username")
-    return response
-
-
-@router.post("/login")
-async def process_login_page(
-    username: str = Form(...),
-    password: str = Form(...),
-    db: AsyncSession = Depends(get_db_session),
-) -> Response:
-    user = await UserCRUD(db).get_by_username(username)
-    if not user:
-        return Response(
-            json.dumps(
-                {
-                    "success": False,
-                    "message": "Username is not registered.",
-                },
-            ),
-            media_type="application/json",
-        )
-    if not verify_password(password, user.hashed_password, user.password_salt):
-        return Response(
-            json.dumps(
-                {
-                    "success": False,
-                    "message": "Password is incorrect.",
-                },
-            ),
-            media_type="application/json",
-        )
-    response = Response(
-        json.dumps(
-            {
-                "success": True,
-                "message": "Login success",
-            },
-        ),
-        media_type="application/json",
-    )
-    base64_username = base64.b64encode(username.encode()).decode()
-    hashed_cookie = sign_cookie(username)
-    cookie_value = f"{base64_username}.{hashed_cookie}"
-    response.set_cookie(key="username", value=cookie_value)
     return response
