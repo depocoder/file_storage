@@ -2,17 +2,19 @@
 import base64
 import hmac
 import json
-import pathlib
 from typing import Optional
 
-from fastapi import APIRouter, Cookie, Depends, Form
+from fastapi import APIRouter, Cookie, Depends, Form, Request
 from fastapi.responses import Response
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.templating import Jinja2Templates
 
 from file_storage.db.crud.user import UserCRUD
 from file_storage.db.dependencies import get_db_session
 from file_storage.settings import settings
 from file_storage.web.api.cryptography import hash_password, sign_cookie
+
+templates = Jinja2Templates(directory=settings.template_dir)
 
 router = APIRouter()
 
@@ -38,16 +40,11 @@ def verify_password(
 
 @router.get("/")
 async def index_page(
+    request: Request,
     username: Optional[str] = Cookie(default=None),
     db: AsyncSession = Depends(get_db_session),
 ) -> Response:
-    template_path = pathlib.Path(
-        settings.template_dir,
-        "index.html",
-    )
-    with open(template_path) as index_file:
-        html = index_file.read()
-        response = Response(html, media_type="text/html")
+    response = templates.TemplateResponse("index.html", {"request": request})
     if not username:
         return response
 
