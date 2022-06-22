@@ -1,5 +1,5 @@
 """User utils."""
-from file_storage.web.api.cryptography import hash_password
+from file_storage.web.cryptography import hash_password
 
 
 def verify_password(

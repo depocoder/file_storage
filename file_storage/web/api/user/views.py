@@ -9,9 +9,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from file_storage.db.crud.user import UserCRUD
 from file_storage.db.dependencies import get_db_session
 from file_storage.db.models.user import User
-from file_storage.web.api.cryptography import sign_cookie
 from file_storage.web.api.user.schema import BaseUserInDbScheme, UserWithPasswordScheme
 from file_storage.web.api.user.utils import verify_password
+from file_storage.web.cryptography import sign_cookie
 
 router = APIRouter()
 

@@ -7,7 +7,6 @@ from sqlalchemy import select
 
 from file_storage.db.crud.base import CRUDBase
 from file_storage.db.models.user import User
-from file_storage.web.api.cryptography import hash_password
 from file_storage.web.api.user.schema import (
     UserDeleteScheme,
     UserReadScheme,
@@ -15,6 +14,7 @@ from file_storage.web.api.user.schema import (
     UserWithHashedPasswordScheme,
     UserWithPasswordScheme,
 )
+from file_storage.web.cryptography import hash_password
 
 logger = logging.getLogger(__name__)
 ModelType = TypeVar("ModelType", bound=User)

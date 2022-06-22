@@ -1,4 +1,4 @@
-"""Fast api main app."""
+"""Fast api main views."""
 import base64
 import hmac
 from typing import Optional
@@ -11,7 +11,7 @@ from starlette.templating import Jinja2Templates
 from file_storage.db.crud.user import UserCRUD
 from file_storage.db.dependencies import get_db_session
 from file_storage.settings import settings
-from file_storage.web.api.cryptography import sign_cookie
+from file_storage.web.cryptography import sign_cookie
 
 templates = Jinja2Templates(directory=settings.template_dir)
 
