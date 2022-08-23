@@ -51,10 +51,5 @@ class Settings(BaseSettings):
             path=f"/{self.db_base}",
         )
 
-    class Config:
-        env_file = ".env"
-        env_prefix = "FILE_STORAGE_"
-        env_file_encoding = "utf-8"
-
 
 settings = Settings()
