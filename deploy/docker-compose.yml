@@ -28,6 +28,8 @@ services:
       POSTGRES_PASSWORD: "file_storage"
       POSTGRES_USER: "file_storage"
       POSTGRES_DB: "file_storage"
+    ports:
+    - 127.0.0.1:5432:5432
     volumes:
     - file_storage-db-data:/var/lib/postgresql/data
     restart: always
@@ -36,9 +38,12 @@ services:
       interval: 2s
       timeout: 3s
       retries: 40
+
   migrator:
     image: file_storage:${FILE_STORAGE_VERSION:-latest}
     restart: "no"
+    env_file:
+    - .env
     command: alembic upgrade head
     environment:
       FILE_STORAGE_DB_HOST: file_storage-db
